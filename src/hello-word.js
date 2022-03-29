@@ -1,5 +1,5 @@
 function helloWord() {
-    console.log("hello Word");
+    console.log("hello Word!!!");
 }
 
 export default helloWord;
