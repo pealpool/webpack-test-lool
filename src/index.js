@@ -3,6 +3,10 @@ import imageSrc from "./assets/vuex.png";
 import svgSrc from "./assets/BBQ.svg";
 import exampleTxt from "./assets/example.txt";
 import jpgMap from "./assets/v2-9d70674f9a56e6a2954f1d003cd93f21_720w.jpg";
+import './style.css';
+import './style.less';
+import _ from "lodash";
+import './async-module.js';
 
 helloWord();
 
@@ -22,3 +26,10 @@ document.body.appendChild(block);
 const img3 = document.createElement("img");
 img3.src = jpgMap;
 document.body.appendChild(img3);
+
+const span = document.createElement('span');
+span.classList.add('icon');
+span.innerHTML = '&#xe61e;';
+document.body.appendChild(span);
+
+console.log(_.join(['index','module','loaded!'],' '))
