@@ -32,4 +32,14 @@ span.classList.add('icon');
 span.innerHTML = '&#xe61e;';
 document.body.appendChild(span);
 
-console.log(_.join(['index','module','loaded!'],' '))
+console.log(_.join(["index", "module", "loaded!"], " "));
+
+const button = document.createElement("button");
+button.textContent = "点击执行加法运算";
+button.addEventListener('click',()=>{
+    //下面的/* webpackChunkName:'math' */不是注释，是有用的，作用是给这个懒加载的包手动命名
+    import(/* webpackChunkName:'math' */'./math').then(({add}) => {
+        console.log(add(4,5));
+    })
+})
+document.body.appendChild(button);

@@ -1,9 +1,8 @@
 # dependencies  npm包文件
-/node_modules
+node_modules/
 
 # production  打包文件
-/build
-/dist
+dist/
 
 # idea
 .idea/
