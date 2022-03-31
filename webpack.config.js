@@ -3,30 +3,39 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const toml = require("toml");
 const yaml = require("yaml");
 const json5 = require("json5");
 
+
+/* 不需要env变量区别生产或开发环境时，写成配置形式：
+module.exports = {...}
+*/
+
+//需要env时，写成函数形式
+// 生产环境 npx webpack --env production --env goal=local
+// 开发环境 npx webpack --env development
 module.exports = (env) => {
   return {
     //entry: "./src/index.js", //入口文件，单入口写法
     /* 普通多入口写法，会有重复代码各自重复打包
-              entry: {
-                  index:'./src/index.js',
-                  another:'./src/another-module.js',
-              },*/
+                  entry: {
+                      index:'./src/index.js',
+                      another:'./src/another-module.js',
+                  },*/
     /* 手动抽离重复包
-              entry: {
-                  index:{
-                      import: './src/index.js',
-                      dependOn: 'shared',        //所依赖的公用模块叫xxx
-                  },
-                  another:{
-                      import: './src/another-module.js',
-                      dependOn: 'shared',
-                  },
-                  shared: 'lodash', //自定义哪个模块为公用模块，例如lodash
-              },*/
+                  entry: {
+                      index:{
+                          import: './src/index.js',
+                          dependOn: 'shared',        //所依赖的公用模块叫xxx
+                      },
+                      another:{
+                          import: './src/another-module.js',
+                          dependOn: 'shared',
+                      },
+                      shared: 'lodash', //自定义哪个模块为公用模块，例如lodash
+                  },*/
     entry: {
       index: "./src/index.js",
       another: "./src/another-module.js",
@@ -54,6 +63,7 @@ module.exports = (env) => {
       new MiniCssExtractPlugin({
         filename: "style/[contenthash].css", //定义抽离的css缩放文件路径
       }),
+      new BundleAnalyzerPlugin(), //依赖图
     ],
     devServer: {
       static: "./dist", //webpack-dev-server的物理路径
@@ -161,7 +171,19 @@ module.exports = (env) => {
       },
     },
     performance: {
-      hints: false,  //禁用性能提示，一般别禁用
+      hints: false, //禁用性能提示，一般别禁用
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"), //设置某个目录别名，方便引用，不用../../../的跳转
+      },
+      //默认扩展名配置：例如import helloWord from "./hello-word";可不用写后缀，不写是默认读js，
+      extensions: [".js", ".json", ".vue"], //不写默认js，写了就优先度从前往后
+    },
+    externalsType: "script", //外部库以哪种方式引入，script 代表已 script 标签引入
+    externals: {
+      //外部引入模块，例如 CDN 形式
+      jquery: ["https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js", "$"],
     },
   };
 };

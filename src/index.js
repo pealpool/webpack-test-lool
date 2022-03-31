@@ -6,7 +6,7 @@ import jpgMap from "./assets/v2-9d70674f9a56e6a2954f1d003cd93f21_720w.jpg";
 import './style.css';
 import './style.less';
 import _ from "lodash";
-import './async-module.js';
+import './async-module';
 
 helloWord();
 
