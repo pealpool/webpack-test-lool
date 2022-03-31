@@ -3,11 +3,11 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const toml = require("toml");
 const yaml = require("yaml");
 const json5 = require("json5");
-
 
 /* 不需要env变量区别生产或开发环境时，写成配置形式：
 module.exports = {...}
@@ -52,7 +52,7 @@ module.exports = (env) => {
     // mode: "development", //开发模式 development，生产模式 production
     //配合命令 npx webpack --env production --env goal=local ,用命令行直接控制是开发环境还是生产环境，不用每次改这个webpack.config.js文件
     mode: env.production ? "production" : "development",
-    devtool: "inline-source-map", //编译后的代码溯源，更好追踪错误
+    devtool: "cheap-module-source-map", //编译后的代码溯源，更好追踪错误
     plugins: [
       //插件
       new HtmlWebpackPlugin({
@@ -66,7 +66,32 @@ module.exports = (env) => {
       new BundleAnalyzerPlugin(), //依赖图
     ],
     devServer: {
-      static: "./dist", //webpack-dev-server的物理路径
+      static: path.resolve(__dirname, "./dist"), //webpack-dev-server的物理路径
+      compress: true, //gzip代码压缩
+      port: 3000, //指定端口号
+      header: {
+        //添加响应头
+        "X-Access-Token": "abc123",
+      },
+      hot: true, //模块热替换，新版默认开启，不用再写
+      liveReload: true, //热加载，新版默认开启，不用再写
+      host: "0.0.0.0", //让局域网小伙伴用ip来链接
+      proxy: {
+        //代理，配合自己写server.js解决开发环境跨域问题，生产环境不解决。
+        "/api": "http://localhost:9000",
+      },
+      // historyApiFallback: true, //解决SPA(单应用)把路由当静态资源去请求的问题
+      historyApiFallback: {
+        //或手动指定不同路径所对应的页面
+        rewrites: [
+          // { from: /^\/$/, to: '/views/landing.html' },
+          // { from: /^\/subpage/, to: '/views/subpage.html' },
+          { from: /./, to: "/views/404.html" },
+        ],
+      },
+      client: {
+        overlay: false, //eslint查到错误是，是否在浏览器也来个遮罩提示。
+      },
     },
     module: {
       rules: [
