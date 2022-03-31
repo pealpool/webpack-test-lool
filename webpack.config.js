@@ -15,7 +15,7 @@ module.exports = {...}
 
 //需要env时，写成函数形式
 // 生产环境 npx webpack --env production --env goal=local
-// 开发环境 npx webpack --env development
+// 开发环境 npx webpack serve --env development
 module.exports = (env) => {
   return {
     //entry: "./src/index.js", //入口文件，单入口写法
