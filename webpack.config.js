@@ -20,22 +20,22 @@ module.exports = (env) => {
   return {
     //entry: "./src/index.js", //入口文件，单入口写法
     /* 普通多入口写法，会有重复代码各自重复打包
-                  entry: {
-                      index:'./src/index.js',
-                      another:'./src/another-module.js',
-                  },*/
+                              entry: {
+                                  index:'./src/index.js',
+                                  another:'./src/another-module.js',
+                              },*/
     /* 手动抽离重复包
-                  entry: {
-                      index:{
-                          import: './src/index.js',
-                          dependOn: 'shared',        //所依赖的公用模块叫xxx
-                      },
-                      another:{
-                          import: './src/another-module.js',
-                          dependOn: 'shared',
-                      },
-                      shared: 'lodash', //自定义哪个模块为公用模块，例如lodash
-                  },*/
+                              entry: {
+                                  index:{
+                                      import: './src/index.js',
+                                      dependOn: 'shared',        //所依赖的公用模块叫xxx
+                                  },
+                                  another:{
+                                      import: './src/another-module.js',
+                                      dependOn: 'shared',
+                                  },
+                                  shared: 'lodash', //自定义哪个模块为公用模块，例如lodash
+                              },*/
     entry: {
       index: "./src/index.js",
       another: "./src/another-module.js",
@@ -64,6 +64,7 @@ module.exports = (env) => {
         filename: "style/[contenthash].css", //定义抽离的css缩放文件路径
       }),
       new BundleAnalyzerPlugin(), //依赖图
+      require("autoprefixer"), //css兼容性插件，需要在package.json设置 "browserlist":[...]
     ],
     devServer: {
       static: path.resolve(__dirname, "./dist"), //webpack-dev-server的物理路径
@@ -123,11 +124,19 @@ module.exports = (env) => {
         },
         {
           test: /\.(css|less)$/,
-          //style-loader是将css代码以<style>...</style>放html的header里
-          //css-loader是将css打包成webpack认识的js代码
           //use: ['style-loader', 'css-loader', 'less-loader'],
-          //MiniCssExtractPlugin 将css单独生成一个文件并以链接方式<link rel="stylesheet" href="">放入html
-          use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"], //加载顺序是从后往前
+          use: [
+            //MiniCssExtractPlugin.loader, //MiniCssExtractPlugin 将css单独生成一个文件并以链接方式<link rel="stylesheet" href="">放入html
+            "style-loader",
+            {
+              //需要配置，就写成对象式
+              loader: "css-loader", //css-loader是将css打包成webpack认识的js代码
+              options: {
+                modules: true, //开启css模块化（就是类名后面加唯一哈希），配合 import style from './xxx.css'; 等，具体上网查
+              },
+            },
+            "less-loader", //style-loader是将css代码以<style>...</style>放html的header里
+          ], //加载顺序是从后往前
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/,
@@ -177,6 +186,11 @@ module.exports = (env) => {
             },
           },
         },
+        {
+          test: /\.ts$/,
+          use:'ts-loader',
+          exclude: /node_modules/, //排除这里面的
+        },
       ],
     },
     optimization: {
@@ -203,7 +217,7 @@ module.exports = (env) => {
         "@": path.resolve(__dirname, "./src"), //设置某个目录别名，方便引用，不用../../../的跳转
       },
       //默认扩展名配置：例如import helloWord from "./hello-word";可不用写后缀，不写是默认读js，
-      extensions: [".js", ".json", ".vue"], //不写默认js，写了就优先度从前往后
+      extensions: [".ts",".js", ".json", ".vue"], //不写默认js，写了就优先度从前往后
     },
     externalsType: "script", //外部库以哪种方式引入，script 代表已 script 标签引入
     externals: {
