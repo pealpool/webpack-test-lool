@@ -20,23 +20,29 @@ module.exports = (env) => {
   return {
     //entry: "./src/index.js", //入口文件，单入口写法
     /* 普通多入口写法，会有重复代码各自重复打包
-                              entry: {
-                                  index:'./src/index.js',
-                                  another:'./src/another-module.js',
-                              },*/
+                                  entry: {
+                                      index:'./src/index.js',
+                                      another:'./src/another-module.js',
+                                  },*/
     /* 手动抽离重复包
-                              entry: {
-                                  index:{
-                                      import: './src/index.js',
-                                      dependOn: 'shared',        //所依赖的公用模块叫xxx
-                                  },
-                                  another:{
-                                      import: './src/another-module.js',
-                                      dependOn: 'shared',
-                                  },
-                                  shared: 'lodash', //自定义哪个模块为公用模块，例如lodash
-                              },*/
+                                  entry: {
+                                      index:{
+                                          import: './src/index.js',
+                                          dependOn: 'shared',        //所依赖的公用模块叫xxx
+                                      },
+                                      another:{
+                                          import: './src/another-module.js',
+                                          dependOn: 'shared',
+                                      },
+                                      shared: 'lodash', //自定义哪个模块为公用模块，例如lodash
+                                  },*/
+    /*entry: [  //多个文件合并成一个
+          './src/app.js',
+          './src/app2.js',
+          'lodash'
+        ],*/
     entry: {
+      main: ["./src/app.js", "./src/app2.js"], //两个合并在一起
       index: "./src/index.js",
       another: "./src/another-module.js",
     },
@@ -188,7 +194,7 @@ module.exports = (env) => {
         },
         {
           test: /\.ts$/,
-          use:'ts-loader',
+          use: "ts-loader",
           exclude: /node_modules/, //排除这里面的
         },
       ],
@@ -217,7 +223,7 @@ module.exports = (env) => {
         "@": path.resolve(__dirname, "./src"), //设置某个目录别名，方便引用，不用../../../的跳转
       },
       //默认扩展名配置：例如import helloWord from "./hello-word";可不用写后缀，不写是默认读js，
-      extensions: [".ts",".js", ".json", ".vue"], //不写默认js，写了就优先度从前往后
+      extensions: [".ts", ".js", ".json", ".vue"], //不写默认js，写了就优先度从前往后
     },
     externalsType: "script", //外部库以哪种方式引入，script 代表已 script 标签引入
     externals: {
