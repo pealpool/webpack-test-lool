@@ -1,16 +1,17 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": [
-        "airbnb-base"  //按airbnb规范
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "rules": {
-        "no-console": 0 //关闭”不用console“的警告
-    }
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    //        "airbnb-base"  //按airbnb规范
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": 0
+    //关闭”不用console“的警告
+  }
 }
